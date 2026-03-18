@@ -38,10 +38,10 @@ export function Scene() {
         args={[200, 200]}
         cellSize={1}
         cellThickness={0.5}
-        cellColor="#374151"
+        cellColor="#1F2933"
         sectionSize={10}
         sectionThickness={1}
-        sectionColor="#1d4ed8"
+        sectionColor="#4E6E81"
         fadeDistance={80}
         fadeStrength={1}
         followCamera={false}

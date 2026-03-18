@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+@theme {
+  /* PANELFAB Brand Colour System */
+  --color-pf-navy:     #12263A;   /* Deep Navy    — primary structure  20% */
+  --color-pf-steel:    #4E6E81;   /* Steel Blue   — panels / borders        */
+  --color-pf-graphite: #1F2933;   /* Graphite     — dark elements      15% */
+  --color-pf-sand:     #F5F7F8;   /* Sand         — light text / bg    60% */
+  --color-pf-orange:   #E46A2E;   /* Signal Orange — CTA / highlight    5% */
+}
