@@ -54,4 +54,10 @@ export const useStore = create((set, get) => ({
   cartPreview: null,
   setCartPreview: (payload) => set({ cartPreview: payload }),
   closeCart: () => set({ cartPreview: null }),
+
+  // --- Panel open/closed state ---
+  panels: { left: true, right: true, bottom: false },
+  setPanelOpen: (which, open) => set(s => ({
+    panels: { ...s.panels, [which]: open }
+  })),
 }));

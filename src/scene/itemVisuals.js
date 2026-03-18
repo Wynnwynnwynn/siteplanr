@@ -1,9 +1,13 @@
+// PANELFAB brand-aligned 3D material palette
 export const ITEM_VISUALS = {
-  office6m:  { wallColor: '#94a3b8', roofColor: '#475569', metalness: 0.3, roughness: 0.6 },
-  office12m: { wallColor: '#94a3b8', roofColor: '#334155', metalness: 0.3, roughness: 0.6 },
-  toilet:    { wallColor: '#fde68a', roofColor: '#d97706', metalness: 0.1, roughness: 0.8 },
-  ablution:  { wallColor: '#86efac', roofColor: '#16a34a', metalness: 0.1, roughness: 0.8 },
-  lunch:     { wallColor: '#fdba74', roofColor: '#ea580c', metalness: 0.2, roughness: 0.7 },
-  cont20:    { wallColor: '#6b7280', roofColor: '#4b5563', metalness: 0.7, roughness: 0.4 },
-  cont40:    { wallColor: '#374151', roofColor: '#1f2937', metalness: 0.7, roughness: 0.4 },
+  // Offices — Steel Blue family
+  office6m:  { wallColor: '#4E6E81', roofColor: '#12263A', metalness: 0.35, roughness: 0.6 },
+  office12m: { wallColor: '#3d5a6b', roofColor: '#0d1c28', metalness: 0.35, roughness: 0.6 },
+  // Welfare — warm tones for contrast against dark ground
+  toilet:    { wallColor: '#c8a96a', roofColor: '#8a6f3a', metalness: 0.1,  roughness: 0.8 },
+  ablution:  { wallColor: '#7aaa8c', roofColor: '#3d6e50', metalness: 0.1,  roughness: 0.8 },
+  lunch:     { wallColor: '#c97b3a', roofColor: '#8a4e1a', metalness: 0.2,  roughness: 0.7 },
+  // Containers — Graphite/dark steel
+  cont20:    { wallColor: '#1F2933', roofColor: '#0f161c', metalness: 0.7,  roughness: 0.4 },
+  cont40:    { wallColor: '#161e26', roofColor: '#090d11', metalness: 0.7,  roughness: 0.4 },
 };
