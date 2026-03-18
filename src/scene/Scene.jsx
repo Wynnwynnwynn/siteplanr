@@ -1,6 +1,5 @@
-import React, { useRef, useState, useCallback } from 'react';
-import { OrbitControls, Grid, ContactShadows, Environment } from '@react-three/drei';
-import { EffectComposer, Outline } from '@react-three/postprocessing';
+import React from 'react';
+import { OrbitControls, Grid, ContactShadows } from '@react-three/drei';
 import { useStore } from '../store.js';
 import { ShedItem } from './ShedItem.jsx';
 import { GhostItem } from './GhostItem.jsx';
@@ -12,31 +11,6 @@ export function Scene() {
   const selectedId = useStore(s => s.selectedId);
   const placingType = useStore(s => s.placingType);
   const { onGroundPointerMove, onGroundClick } = useSceneInteractions();
-
-  // Track mesh refs for Outline selection
-  const meshMapRef = useRef(new Map());
-  const [selectedMeshes, setSelectedMeshes] = useState([]);
-
-  const handleRegisterRef = useCallback((id, mesh) => {
-    if (mesh) {
-      meshMapRef.current.set(id, mesh);
-    } else {
-      meshMapRef.current.delete(id);
-    }
-    // Update selected meshes when ref changes for the selected item
-    if (id === selectedId) {
-      setSelectedMeshes(mesh ? [mesh] : []);
-    }
-  }, [selectedId]);
-
-  // Update selected meshes when selection changes
-  const prevSelectedIdRef = useRef(null);
-  if (prevSelectedIdRef.current !== selectedId) {
-    prevSelectedIdRef.current = selectedId;
-    const mesh = selectedId ? meshMapRef.current.get(selectedId) : null;
-    // Defer to avoid render-phase setState
-    setTimeout(() => setSelectedMeshes(mesh ? [mesh] : []), 0);
-  }
 
   return (
     <>
@@ -90,25 +64,11 @@ export function Scene() {
           key={it.id}
           item={it}
           isSelected={it.id === selectedId}
-          onRegisterRef={handleRegisterRef}
         />
       ))}
 
       {/* Ghost preview */}
       {placingType && <GhostItem />}
-
-      {/* Post-processing outline for selection */}
-      {selectedMeshes.length > 0 && (
-        <EffectComposer>
-          <Outline
-            selection={selectedMeshes}
-            edgeStrength={5}
-            pulseSpeed={0}
-            visibleEdgeColor={0x60a5fa}
-            hiddenEdgeColor={0x1d4ed8}
-          />
-        </EffectComposer>
-      )}
 
       <OrbitControls
         makeDefault

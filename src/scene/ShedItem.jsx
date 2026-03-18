@@ -1,23 +1,12 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { useStore } from '../store.js';
 import { aabbFrom, aabbOverlap, normalizedYaw } from '../utils.js';
 import { ITEM_VISUALS } from './itemVisuals.js';
 
-export function ShedItem({ item, isSelected, onRegisterRef }) {
-  const meshRef = useRef();
+export function ShedItem({ item, isSelected }) {
   const items = useStore(s => s.items);
   const setSelectedId = useStore(s => s.setSelectedId);
   const setDraggingId = useStore(s => s.setDraggingId);
-
-  // Register ref for postprocessing Outline selection
-  useEffect(() => {
-    if (onRegisterRef && meshRef.current) {
-      onRegisterRef(item.id, meshRef.current);
-    }
-    return () => {
-      if (onRegisterRef) onRegisterRef(item.id, null);
-    };
-  }, [item.id, onRegisterRef]);
 
   const visual = ITEM_VISUALS[item.type] ?? {
     wallColor: '#94a3b8', roofColor: '#475569', metalness: 0.2, roughness: 0.7
@@ -46,12 +35,7 @@ export function ShedItem({ item, isSelected, onRegisterRef }) {
       }}
     >
       {/* Main body */}
-      <mesh
-        ref={meshRef}
-        castShadow
-        receiveShadow
-        position={[0, ht / 2, 0]}
-      >
+      <mesh castShadow receiveShadow position={[0, ht / 2, 0]}>
         <boxGeometry args={[sx, ht, sz]} />
         <meshStandardMaterial
           color={wallColor}
