@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SitePlanr – Projects</title>
+  <!--
+    FONT: SitePlanr uses "Open Sans" (self-hosted WOFF2).
+    We load it from Google Fonts here as a stand-in.
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <!--
+    ICON SYSTEM: SitePlanr uses a custom SVG icon system.
+    We replicate it using inline SVGs and Unicode characters mapped to the same
+    class names. In production, swap these SVGs for the complete icon library.
+    FLAG: This is the #1 design-system dependency to resolve.
+  -->
+  <style>
+    /* =====================================================
+       DESIGN TOKENS
+       Extracted from computed styles via DevTools/JS.
+       Colors match SitePlanr design system tokens.
+    ====================================================== */
+    :root {
+      /* Typography */
+      --font-family: "Open Sans", sans-serif;
+      --font-size-base: 14px;
+      --font-size-sm: 12px;
+      --font-size-lg: 20px;
+      /* Color Palette (SitePlanr Design System) */
+      --color-primary:        #005F9E;  /* Primary Blue — New button, active text */
+      --color-primary-dark:   #004F85;  /* Hover state */
+      --color-cta:            #FFBE00;  /* CTA Yellow — Upgrade button */
+      --color-cta-hover:      #E6AB00;
+      --color-text-dark:      #363545;  /* Headings, primary body text */
+      --color-text-mid:       #595868;  /* Icon color, secondary text */
+      --color-text-light:     #6A6976;  /* Tertiary text, Cancel button */
+      --color-bg-page:        #F3F3F7;  /* Page / app background */
+      --color-bg-surface:     #FFFFFF;  /* Cards, nav bar, dropdown, dialog */
+      --color-bg-dialog:      #F9F9FB;  /* Dialog inner bg (slightly off-white) */
+      --color-bg-active:      #D0D0D7;  /* Active/pressed icon button bg */
+      --color-bg-suggestion:  #E0E0E6;  /* Assistant suggestion chip bg */
+      --color-border-subtle:  rgba(0,0,0,0.08);
+      --color-shadow:         rgba(174,174,182,0.8);
+      --color-overlay:        rgba(10,10,10,0.45);
+      --color-assistant-accent: #0C77BE; /* Left border of assistant panel */
+      /* Spacing */
+      --nav-height:     64px;
+      --border-radius:  2px;
+      --border-radius-circle: 50%;
+      /* Z-index layers */
+      --z-header:     1004;
+      --z-dropdown:     12;
+      --z-assistant:  1000;
+      --z-modal:      1020;
+      --z-snackbar:   1025;
+    }
+    /* =====================================================
+       RESET & BASE
+    ====================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      color: var(--color-text-dark);
+      background-color: var(--color-bg-page);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    button { font-family: inherit; cursor: pointer; }
+    h1, h2, h3, h4, h5, h6 { font-family: inherit; }
+    /* Utility classes (trimmed Bootstrap-style used in real app) */
+    .d-flex          { display: flex !important; }
+    .d-none          { display: none !important; }
+    .d-block         { display: block !important; }
+    .flex-column     { flex-direction: column !important; }
+    .align-items-center  { align-items: center !important; }
+    .align-items-start   { align-items: flex-start !important; }
+    .justify-content-between { justify-content: space-between !important; }
+    .justify-content-end     { justify-content: flex-end !important; }
+    .text-ellipsis   { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ml-2            { margin-left: 8px; }
+    .mr-1            { margin-right: 4px; }
+    .mt-1            { margin-top: 4px; }
+    .text-center     { text-align: center; }
+    .full-width      { width: 100%; }
+    /* =====================================================
+       ICON SYSTEM
+       SitePlanr custom SVG icon system.
+       Uses inline SVG replacements — integrate with complete
+       icon library once available.
+    ====================================================== */
+    .icon-font {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      pointer-events: none;
+    }
+    .icon-font svg { width: 24px; height: 24px; fill: currentColor; }
+    /* =====================================================
+       1. TOP NAVIGATION BAR
+       Real DOM:
+         <header class="siteplanr-header">
+           <div class="app-header project">
+             <div id="siteplanr-logo" class="logo"> … </div>
+             <div id="main-nav-bar" class="global-nav-icons"> … </div>
+           </div>
+         </header>
+       Computed styles:
+         - header: position fixed, z-index 1004, height 64px
+         - .app-header: display flex, align-items center, padding 0 16px,
+           background #FFF, box-shadow rgba(174,174,182) 0 0 4px 0
+    ====================================================== */
+    .siteplanr-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: var(--z-header);
+      height: var(--nav-height);
+    }
+    .app-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      padding: 0 16px;
+      background-color: var(--color-bg-surface);
+      box-shadow: 0 0 4px 0 var(--color-shadow);
+    }
+    /* Logo area — flex: 0 1 auto in real app */
+    .logo-area {
+      display: flex;
+      align-items: center;
+      flex: 0 1 auto;
+    }
+    .logo-area .app-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    /* SitePlanr logo SVG placeholder — real app uses SVG image at 182×24 */
+    .logo-svg {
+      height: 24px;
+      width: auto;
+    }
+    /* Nav icons container
+       Real DOM: #main-nav-bar .global-nav-icons
+       Computed: display flex, flex-direction row, align-items center, height 40px */
+    .global-nav-icons {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 4px;
+      height: 40px;
+    }
+    /* Dropdown pane wrapper — used for Help, Apps, User menus */
+    .dropdown-pane-container {
+      position: relative;
+    }
+    /* =====================================================
+       BUTTON VARIANTS
+       Real app class structure: .button.[variant].[size].[shape]
+       Sizes: icon-medium (40×40px)
+       Shapes: icon-circle (border-radius 50%), icon-square (border-radius 0)
+       Variants: tertiary (transparent), primary (blue), cta (yellow),
+                 link-secondary (text-only), default hollow (bordered)
+    ====================================================== */
+    /* Base button */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      color: var(--color-text-mid);
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+      line-height: 1;
+    }
+    /* Icon size: 40×40 */
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+    }
+    /* Round icon button — used for Search, Assistant, Profile */
+    .btn-icon-circle {
+      border-radius: var(--border-radius-circle);
+    }
+    /* Square icon button — used for Help, Apps, view toggles, 3D */
+    .btn-icon-square {
+      border-radius: 0;
+    }
+    /* Tertiary variant — transparent background, icon only */
+    .btn-tertiary {
+      background-color: transparent;
+      color: var(--color-text-mid);
+    }
+    .btn-tertiary:hover {
+      background-color: var(--color-bg-active);
+    }
+    /* Default hollow — transparent bg, used for toggle buttons, profile */
+    .btn-hollow {
+      background-color: transparent;
+      color: var(--color-text-mid);
+    }
+    .btn-hollow:hover,
+    .btn-hollow.active {
+      background-color: var(--color-bg-active);
+    }
+    /* Primary — solid blue, used for "New" button */
+    .btn-primary {
+      background-color: var(--color-primary);
+      color: #FFFFFF;
+      border-radius: var(--border-radius);
+      padding: 8px 16px;
+      height: 40px;
+      border: none;
+    }
+    .btn-primary:hover {
+      background-color: var(--color-primary-dark);
+    }
+    /* CTA — yellow, used for Upgrade button */
+    .btn-cta {
+      background-color: var(--color-cta);
+      color: var(--color-text-dark);
+      border-radius: var(--border-radius);
+      padding: 8px 16px;
+      height: 40px;
+    }
+    .btn-cta:hover {
+      background-color: var(--color-cta-hover);
+    }
+    /* Link secondary — text-only cancel button */
+    .btn-link-secondary {
+      background-color: transparent;
+      color: var(--color-text-light);
+      border-radius: var(--border-radius);
+      padding: 8px 16px;
+      height: 40px;
+    }
+    .btn-link-secondary:hover {
+      background-color: rgba(0,0,0,0.05);
+    }
+    /* Profile avatar button — circular, shows user photo */
+    .avatar-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      padding: 0;
+      overflow: hidden;
+      background: #D0D0D7;
+    }
+    .avatar-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    /* Initials fallback */
+    .avatar-initials {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-primary);
+      color: #FFF;
+      font-weight: 600;
+      font-size: 14px;
+      border-radius: 50%;
+    }
+    /* =====================================================
+       DROPDOWN PANE
+       Real DOM: .dropdown-pane.drop-down-width.right
+       Computed: position absolute, z-index 12, bg #FFF,
+         border-radius 2px, box-shadow rgba(174,174,182) 0 0 6px 0,
+         padding 16px 0 (list style)
+       Width: 300px for user menu, fitContent for region
+    ====================================================== */
+    .dropdown-pane {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 4px);
+      background-color: var(--color-bg-surface);
+      border-radius: var(--border-radius);
+      box-shadow: 0 0 6px 0 var(--color-shadow);
+      padding: 16px 0;
+      z-index: var(--z-dropdown);
+      min-width: 160px;
+    }
+    .dropdown-pane.width-300 { width: 300px; }
+    .dropdown-pane.open { display: block; }
+    /* Dropdown list items
+       Real: .list-item — display flex, padding 8px 16px,
+       cursor pointer, font-size 14px, color #363545
+       Active: color #005F9E */
+    .dropdown-list { padding: 0; }
+    .dropdown-list .list-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      font-size: var(--font-size-base);
+      color: var(--color-text-dark);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .dropdown-list .list-item:hover {
+      background-color: var(--color-bg-page);
+    }
+    .dropdown-list .list-item.active {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+    .dropdown-list .list-item.text-semibold {
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+    .dropdown-list hr {
+      border: none;
+      border-top: 1px solid var(--color-border-subtle);
+      margin: 8px 0;
+    }
+    /* User info panel within user dropdown
+       Real: .user-info — display flex, padding 8px 16px */
+    .user-info {
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      gap: 12px;
+    }
+    .user-info .avatar-small {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--color-primary);
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .user-info h5 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+    }
+    .user-info p {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-dark);
+      margin-top: 2px;
+    }
+    .dropdown-divider {
+      border: none;
+      border-top: 1px solid var(--color-border-subtle);
+      margin: 8px 0;
+    }
+    /* =====================================================
+       2. MAIN LAYOUT
+       After nav: main.main — display flex, flex-direction row
+       Left: .container-fluid.moduleFluid — flex: 1 1 auto
+       Right: .assistant-wrapper — fixed panel (when open)
+    ====================================================== */
+    .app-body {
+      display: flex;
+      flex-direction: row;
+      margin-top: var(--nav-height); /* push below fixed header */
+      min-height: calc(100vh - var(--nav-height));
+      position: relative;
+    }
+    .module-fluid {
+      flex: 1 1 auto;
+      padding-bottom: 16px;
+      min-width: 0;
+      transition: margin-right 0.25s ease; /* slide content when assistant opens */
+    }
+    .module-fluid.assistant-open {
+      margin-right: 320px;
+    }
+    /* =====================================================
+       2. PAGE HEADER AREA
+       Real DOM:
+         .head-container.container
+           .breadcrumbs (ul, flex row, empty when at root)
+           .page-heading (flex row, justify-content space-between)
+             <div> → <h1>Projects</h1>
+             .heading-button-group (flex row, align-items center)
+               [grid toggle] [list toggle] [3D toggle] [New dropdown]
+           .toolbar-section (flex row, filter/region controls)
+       head-container: display block, padding 0 16px
+    ====================================================== */
+    .head-container {
+      padding: 16px 16px 0;
+    }
+    .breadcrumbs {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+      min-height: 24px;
+      margin-bottom: 4px;
+    }
+    /* .page-heading: display flex, justify-content space-between, align-items center */
+    .page-heading {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+    }
+    /* Projects H1 — fontSize 20px, fontWeight 400, color #363545 */
+    .page-heading h1 {
+      font-size: var(--font-size-lg);
+      font-weight: 400;
+      color: var(--color-text-dark);
+      line-height: 1.3;
+    }
+    /* Heading button group — contains view toggles + New */
+    .heading-button-group {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0;
+    }
+    /* View toggle buttons form a borderless group
+       Active state: background-color #D0D0D7 */
+    .view-toggle-group {
+      display: flex;
+      flex-direction: row;
+    }
+    /* =====================================================
+       3. REGION DROPDOWN (TOOLBAR SECTION)
+       Real DOM:
+         .toolbar-section (flex row, align-items center, justify-content space-between)
+           .filter-wrapper
+             .dropdown-pane-container.select-menu.regions-dd
+               .name.dropdownpane-link (trigger — flex, padding 8px 8px 8px 16px)
+                 <span class="text-ellipsis">Australia</span>
+                 <i class="icon-font">
+               .dropdown-pane.fitContent (absolute, bg white, shadow)
+                 <ul class="dropdown-list">
+                   <li value="North America" class="list-item">…</li>
+                   …
+                   <li class="list-item active">Australia <i>…</li>
+       Active item: color #005F9E, has checkmark icon on right
+    ====================================================== */
+    .toolbar-section {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0 4px;
+    }
+    .filter-wrapper {
+      position: relative;
+    }
+    /* Region dropdown trigger
+       Real: .name.dropdownpane-link — display flex, align-items center,
+       cursor pointer, font-size 14px, font-weight 600, padding 8px 8px 8px 16px */
+    .region-trigger {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 8px 8px 16px;
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      color: var(--color-text-dark);
+      cursor: pointer;
+      border-radius: var(--border-radius);
+      user-select: none;
+    }
+    .region-trigger:hover {
+      background-color: rgba(0,0,0,0.05);
+    }
+    /* Caret icon */
+    .region-trigger .caret {
+      width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .region-trigger.open .caret {
+      transform: rotate(180deg);
+    }
+    /* Region dropdown — fitContent width (not fixed 300px) */
+    .region-dropdown-pane {
+      min-width: 160px;
+    }
+    /* Active list item shows checkmark on right */
+    .list-item.active {
+      display: flex;
+      justify-content: space-between;
+      color: var(--color-primary);
+    }
+    .list-item.active .check-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--color-primary);
+    }
+    /* =====================================================
+       PROJECT CARDS GRID
+       Real DOM:
+         .container.no-scroll.tile (display block, padding 8px 16px 0)
+           .row (display flex, flex-wrap wrap)
+             .col-12.col-sm-6.col-md-4.col-lg-3.col-xl-3
+               .media-object (display block, bg white, border-radius 2px, box-shadow)
+                 .thumbnail-wrapper (height 160px, overflow hidden)
+                   <img>
+                 .media-object-section (flex, justify-content space-between,
+                                        align-items center, padding 0 8px 0 16px, height 56px)
+                   .media-object-details → <h5> project name
+                   .media-object-edit → 3-dot menu button
+    ====================================================== */
+    .tile-container {
+      padding: 8px 16px 0;
+    }
+    /* Bootstrap-style responsive row */
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0 -8px;
+    }
+    .col-project {
+      padding: 0 8px;
+      margin-bottom: 16px;
+      width: 100%;
+    }
+    @media (min-width: 576px)  { .col-project { width: 50%; } }
+    @media (min-width: 768px)  { .col-project { width: 33.333%; } }
+    @media (min-width: 992px)  { .col-project { width: 25%; } }
+    @media (min-width: 1200px) { .col-project { width: 25%; } }
+    /* Project card (.media-object)
+       Computed: bg #FFF, border-radius 2px, box-shadow rgba(174,174,182) 0 0 4px 0 */
+    .media-object {
+      background-color: var(--color-bg-surface);
+      border-radius: var(--border-radius);
+      box-shadow: 0 0 4px 0 var(--color-shadow);
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow 0.15s ease;
+    }
+    .media-object:hover {
+      box-shadow: 0 0 8px 0 var(--color-shadow);
+    }
+    /* Thumbnail area — 160px tall, shows hard hat SVG or project image */
+    .thumbnail-wrapper {
+      height: 160px;
+      overflow: hidden;
+      background-color: #C8C8CC;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .thumbnail-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    /* Default hard hat placeholder SVG color matches the real app's gray */
+    .thumbnail-placeholder {
+      width: 100px;
+      height: 100px;
+      color: #A8A8B0;
+    }
+    /* Card footer (.media-object-section)
+       Computed: display flex, justify-content space-between, align-items center,
+       padding 0 8px 0 16px, height 56px */
+    .media-object-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8px 0 16px;
+      height: 56px;
+    }
+    .media-object-details h5 {
+      font-size: var(--font-size-base);
+      font-weight: 400;
+      color: var(--color-text-dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+    }
+    /* 3-dot context menu button
+       Real: .dropdownpane-link.button.icon-medium.tertiary.icon-circle
+       Computed: 40×40, border-radius 2px, transparent */
+    .context-menu-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--border-radius);
+      background: transparent;
+      border: none;
+      color: var(--color-text-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .context-menu-btn:hover {
+      background-color: var(--color-bg-page);
+    }
+    /* =====================================================
+       4. EMPTY STATE (for accounts with no projects)
+       Real: Not loaded in this session (account has a project).
+       Reconstructed from typical SitePlanr pattern:
+         Centered layout, circular hard hat icon, heading + instruction text
+    ====================================================== */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px;
+      text-align: center;
+    }
+    .empty-state-icon {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background-color: #D0D0D7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      color: #8A8A96;
+    }
+    .empty-state h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      margin-bottom: 8px;
+    }
+    .empty-state p {
+      font-size: var(--font-size-base);
+      color: var(--color-text-light);
+      max-width: 320px;
+      line-height: 1.5;
+    }
+    /* =====================================================
+       5. NEW PROJECT DIALOG
+       Real DOM pattern (Zurb Foundation "reveal"):
+         .reveal-overlay#upsellDialog (fixed, full-screen, z-1020, rgba overlay)
+           .reveal-container (flex column, width 100vw)
+             .reveal (bg #F9F9FB, width 472px, box-shadow)
+               <header class="align-items-start"> (flex, justify-content space-between,
+                 padding 40px 40px 8px — title + X close button)
+               .scroll-section (padding 0 40px 16px — form content)
+               <footer> (flex, justify-content flex-end, padding 16px 40px 40px)
+                 <hr>
+                 .footer-content (Cancel + Submit buttons)
+       Notes:
+         - No <form> element — the real app uses React controlled components
+         - Dialog is rendered dynamically; no pre-rendered HTML in DOM
+    ====================================================== */
+    /* Overlay backdrop */
+    .reveal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: var(--color-overlay);
+      z-index: var(--z-modal);
+      align-items: center;
+      justify-content: center;
+    }
+    .reveal-overlay.open {
+      display: flex;
+    }
+    /* Dialog container centers the dialog box */
+    .reveal-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+    /* The dialog box itself
+       Computed: bg #F9F9FB, width 472px, box-shadow rgba(174,174,182) 0 0 6px 0 */
+    .reveal {
+      background-color: var(--color-bg-dialog);
+      width: 472px;
+      max-width: 95vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 6px 0 var(--color-shadow);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+    }
+    /* Dialog header — title + close button
+       Computed: display flex, align-items flex-start, justify-content space-between,
+       padding 40px 40px 8px */
+    .reveal > header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 40px 40px 8px;
+      flex-shrink: 0;
+    }
+    .reveal > header .dialog-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      line-height: 1.3;
+    }
+    /* Scroll section — dialog body with form fields */
+    .reveal .scroll-section {
+      padding: 0 40px 16px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    /* Dialog footer
+       Computed: display flex, justify-content flex-end, padding 16px 40px 40px
+       Contains <hr> then .footer-content (button row) */
+    .reveal > footer {
+      flex-shrink: 0;
+    }
+    .reveal > footer hr {
+      border: none;
+      border-top: 1px solid var(--color-border-subtle);
+      margin: 0 40px;
+    }
+    .reveal .footer-content {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 40px 40px;
+    }
+    /* Form fields — real app uses React controlled inputs */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      color: var(--color-text-dark);
+      margin-bottom: 6px;
+    }
+    .form-label .required {
+      color: #DA212C;
+      margin-left: 2px;
+    }
+    .form-input {
+      width: 100%;
+      height: 40px;
+      padding: 8px 12px;
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      color: var(--color-text-dark);
+      background-color: var(--color-bg-surface);
+      border: 1px solid #ADADBA;
+      border-radius: var(--border-radius);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+    .form-input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px rgba(0,95,158,0.2);
+    }
+    .form-textarea {
+      width: 100%;
+      height: 80px;
+      padding: 8px 12px;
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      color: var(--color-text-dark);
+      background-color: var(--color-bg-surface);
+      border: 1px solid #ADADBA;
+      border-radius: var(--border-radius);
+      outline: none;
+      resize: vertical;
+    }
+    .form-textarea:focus {
+      border-color: var(--color-primary);
+    }
+    /* Form select (region chooser inside dialog) */
+    .form-select {
+      width: 100%;
+      height: 40px;
+      padding: 8px 12px;
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      color: var(--color-text-dark);
+      background-color: var(--color-bg-surface);
+      border: 1px solid #ADADBA;
+      border-radius: var(--border-radius);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%23595868'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+    }
+    /* =====================================================
+       6. ASSISTANT PANEL
+       Real DOM:
+         .assistant-wrapper (position fixed, right 0, top 64px, bottom 0,
+           width 320px, bg #FFF, flex column)
+       Shown when user opens AI Assistant — not visible by default
+    ====================================================== */
+    .assistant-wrapper {
+      display: none;
+      position: fixed;
+      right: 0;
+      top: var(--nav-height);
+      bottom: 0;
+      width: 320px;
+      background-color: var(--color-bg-surface);
+      flex-direction: column;
+      border-left: 4px solid var(--color-assistant-accent);
+      z-index: var(--z-assistant);
+    }
+    .assistant-wrapper.open {
+      display: flex;
+    }
+    .assistant-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-border-subtle);
+      flex-shrink: 0;
+    }
+    .assistant-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+    }
+    .assistant-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+  </style>
+</head>
+<body>
+  <!-- TOP NAVIGATION BAR -->
+  <header class="siteplanr-header">
+    <div class="app-header">
+      <!-- Logo + SitePlanr brand name -->
+      <div class="logo-area">
+        <div class="app-logo">
+          <svg class="logo-svg" viewBox="0 0 182 24" xmlns="http://www.w3.org/2000/svg">
+            <!-- SitePlanr logo placeholder — replace with actual brand asset -->
+            <text x="0" y="18" font-family="Open Sans, sans-serif" font-size="20" font-weight="600" fill="#005F9E">SitePlanr</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Right nav icons: Search, Assistant, Help, Apps, Profile -->
+      <div class="global-nav-icons">
+        <!-- Search button -->
+        <button class="btn btn-icon btn-icon-circle btn-tertiary" title="Search">
+          <svg class="icon-font" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2"/>
+            <line x1="14" y1="14" x2="20" y2="20" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </button>
+
+        <!-- Assistant button -->
+        <button class="btn btn-icon btn-icon-circle btn-tertiary" title="Assistant">
+          <svg class="icon-font" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="currentColor" opacity="0.3"/>
+            <text x="12" y="16" text-anchor="middle" font-size="12" font-weight="bold" fill="currentColor">AI</text>
+          </svg>
+        </button>
+
+        <!-- Help dropdown -->
+        <div class="dropdown-pane-container">
+          <button class="btn btn-icon btn-icon-square btn-tertiary" title="Help">
+            <svg class="icon-font" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+              <text x="12" y="15" text-anchor="middle" font-size="14" font-weight="bold" fill="currentColor">?</text>
+            </svg>
+          </button>
+          <div class="dropdown-pane width-300">
+            <ul class="dropdown-list">
+              <li class="list-item">Documentation</li>
+              <li class="list-item">Community</li>
+              <li class="list-item">Support</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Apps dropdown -->
+        <div class="dropdown-pane-container">
+          <button class="btn btn-icon btn-icon-square btn-tertiary" title="Apps">
+            <svg class="icon-font" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="3" width="4" height="4" fill="currentColor"/>
+              <rect x="10" y="3" width="4" height="4" fill="currentColor"/>
+              <rect x="17" y="3" width="4" height="4" fill="currentColor"/>
+              <rect x="3" y="10" width="4" height="4" fill="currentColor"/>
+              <rect x="10" y="10" width="4" height="4" fill="currentColor"/>
+              <rect x="17" y="10" width="4" height="4" fill="currentColor"/>
+              <rect x="3" y="17" width="4" height="4" fill="currentColor"/>
+              <rect x="10" y="17" width="4" height="4" fill="currentColor"/>
+              <rect x="17" y="17" width="4" height="4" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="dropdown-pane width-300">
+            <ul class="dropdown-list">
+              <li class="list-item">App 1</li>
+              <li class="list-item">App 2</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Profile dropdown -->
+        <div class="dropdown-pane-container">
+          <button class="avatar-btn" title="Profile">
+            <div class="avatar-initials">JD</div>
+          </button>
+          <div class="dropdown-pane width-300">
+            <div class="user-info">
+              <div class="avatar-small">JD</div>
+              <div>
+                <h5>John Doe</h5>
+                <p>john@example.com</p>
+              </div>
+            </div>
+            <hr class="dropdown-divider"/>
+            <ul class="dropdown-list">
+              <li class="list-item">Profile Settings</li>
+              <li class="list-item">Organization</li>
+              <li class="list-item">Preferences</li>
+            </ul>
+            <hr class="dropdown-divider"/>
+            <ul class="dropdown-list">
+              <li class="list-item">Sign Out</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="app-body">
+    <div class="module-fluid">
+      <!-- PAGE HEADER -->
+      <div class="head-container">
+        <!-- Breadcrumbs (empty at root) -->
+        <ul class="breadcrumbs"></ul>
+
+        <!-- Page title + action buttons -->
+        <div class="page-heading">
+          <h1>Projects</h1>
+          <div class="heading-button-group">
+            <!-- View toggles -->
+            <div class="view-toggle-group">
+              <button class="btn btn-icon btn-icon-square btn-hollow active" title="Grid view">
+                <svg class="icon-font" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="3" width="5" height="5" fill="currentColor"/>
+                  <rect x="10" y="3" width="5" height="5" fill="currentColor"/>
+                  <rect x="17" y="3" width="5" height="5" fill="currentColor"/>
+                  <rect x="3" y="10" width="5" height="5" fill="currentColor"/>
+                  <rect x="10" y="10" width="5" height="5" fill="currentColor"/>
+                  <rect x="17" y="10" width="5" height="5" fill="currentColor"/>
+                  <rect x="3" y="17" width="5" height="5" fill="currentColor"/>
+                  <rect x="10" y="17" width="5" height="5" fill="currentColor"/>
+                  <rect x="17" y="17" width="5" height="5" fill="currentColor"/>
+                </svg>
+              </button>
+              <button class="btn btn-icon btn-icon-square btn-hollow" title="List view">
+                <svg class="icon-font" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/>
+                  <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
+                  <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </button>
+              <button class="btn btn-icon btn-icon-square btn-hollow" title="3D view">
+                <svg class="icon-font" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 5v14l9 5 9-5V5l-9-5-9 5z" fill="none" stroke="currentColor" stroke-width="2"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- New project button -->
+            <button class="btn btn-primary">New</button>
+          </div>
+        </div>
+
+        <!-- Toolbar: region filter -->
+        <div class="toolbar-section">
+          <div class="filter-wrapper">
+            <div class="dropdown-pane-container">
+              <button class="region-trigger" title="Select region">
+                <span class="text-ellipsis">Australia</span>
+                <span class="caret">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 10l5 5 5-5z" fill="currentColor"/>
+                  </svg>
+                </span>
+              </button>
+              <div class="dropdown-pane region-dropdown-pane">
+                <ul class="dropdown-list">
+                  <li class="list-item">North America</li>
+                  <li class="list-item">Europe</li>
+                  <li class="list-item">Asia</li>
+                  <li class="list-item active">
+                    <span>Australia</span>
+                    <svg class="check-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <polyline points="20 6 9 17 4 12" fill="none" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECT CARDS GRID -->
+      <div class="tile-container">
+        <div class="row">
+          <!-- Project 1 -->
+          <div class="col-project">
+            <div class="media-object">
+              <div class="thumbnail-wrapper">
+                <svg class="thumbnail-placeholder" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <g fill="currentColor">
+                    <path d="M20 50h60v30H20z"/>
+                    <polygon points="50 20 65 35 35 35"/>
+                  </g>
+                </svg>
+              </div>
+              <div class="media-object-section">
+                <div class="media-object-details">
+                  <h5>Downtown Renovation</h5>
+                </div>
+                <button class="context-menu-btn" title="Options">
+                  <svg class="icon-font" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="5" r="2" fill="currentColor"/>
+                    <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                    <circle cx="12" cy="19" r="2" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Project 2 -->
+          <div class="col-project">
+            <div class="media-object">
+              <div class="thumbnail-wrapper">
+                <svg class="thumbnail-placeholder" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <g fill="currentColor">
+                    <path d="M20 50h60v30H20z"/>
+                    <polygon points="50 20 65 35 35 35"/>
+                  </g>
+                </svg>
+              </div>
+              <div class="media-object-section">
+                <div class="media-object-details">
+                  <h5>Harbor Bridge Upgrade</h5>
+                </div>
+                <button class="context-menu-btn" title="Options">
+                  <svg class="icon-font" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="5" r="2" fill="currentColor"/>
+                    <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                    <circle cx="12" cy="19" r="2" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Project 3 -->
+          <div class="col-project">
+            <div class="media-object">
+              <div class="thumbnail-wrapper">
+                <svg class="thumbnail-placeholder" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <g fill="currentColor">
+                    <path d="M20 50h60v30H20z"/>
+                    <polygon points="50 20 65 35 35 35"/>
+                  </g>
+                </svg>
+              </div>
+              <div class="media-object-section">
+                <div class="media-object-details">
+                  <h5>Tech Campus Development</h5>
+                </div>
+                <button class="context-menu-btn" title="Options">
+                  <svg class="icon-font" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="5" r="2" fill="currentColor"/>
+                    <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                    <circle cx="12" cy="19" r="2" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Project 4 -->
+          <div class="col-project">
+            <div class="media-object">
+              <div class="thumbnail-wrapper">
+                <svg class="thumbnail-placeholder" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <g fill="currentColor">
+                    <path d="M20 50h60v30H20z"/>
+                    <polygon points="50 20 65 35 35 35"/>
+                  </g>
+                </svg>
+              </div>
+              <div class="media-object-section">
+                <div class="media-object-details">
+                  <h5>Urban Park Expansion</h5>
+                </div>
+                <button class="context-menu-btn" title="Options">
+                  <svg class="icon-font" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="5" r="2" fill="currentColor"/>
+                    <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                    <circle cx="12" cy="19" r="2" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ASSISTANT PANEL (hidden by default) -->
+    <aside class="assistant-wrapper">
+      <div class="assistant-header">
+        <h3>Assistant</h3>
+        <button class="btn btn-icon btn-icon-circle btn-tertiary" title="Close">
+          <svg class="icon-font" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/>
+            <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </button>
+      </div>
+      <div class="assistant-content">
+        <!-- Assistant messages go here -->
+      </div>
+    </aside>
+  </main>
+</body>
+</html>
