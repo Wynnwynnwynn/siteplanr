@@ -3,12 +3,13 @@ import React from 'react';
 export function MenuItem({ label, onClick, danger, disabled, subtitle }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={disabled}
       className={`w-full flex items-center justify-between px-3 py-2 text-sm
         transition-colors text-left
         ${disabled
-          ? 'opacity-50 cursor-not-allowed'
+          ? 'opacity-50 cursor-not-allowed text-pf-steel'
           : danger
             ? 'text-red-400 hover:bg-red-900/20'
             : 'text-pf-sand hover:bg-pf-steel/20'

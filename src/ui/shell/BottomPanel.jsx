@@ -102,8 +102,6 @@ function QuoteTab({ items }) {
 export function BottomPanel({ panelRef }) {
   const [tab, setTab] = useState('Items');
   const items = useStore(s => s.items);
-  const panels = useStore(s => s.panels);
-  const setPanelOpen = useStore(s => s.setPanelOpen);
 
   const totalWeekly = items.reduce((s, it) => s + (CATALOGUE[it.type]?.weekly ?? 0), 0);
 
