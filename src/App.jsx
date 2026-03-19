@@ -57,28 +57,28 @@ export default function App() {
       <PanelGroup direction="vertical" className="flex-1 min-h-0">
 
         {/* Main row: left | viewport | right */}
-        <Panel defaultSize={80} minSize={40}>
+        <Panel defaultSize={100} minSize={40}>
           <PanelGroup direction="horizontal" className="h-full">
 
-            {/* Left — Building catalogue */}
+            {/* Left — Building catalogue (expandable right) */}
             <Panel
               panelRef={leftRef}
               collapsible
-              defaultSize={isMobile ? 0 : 18}
-              minSize={12}
-              maxSize={30}
+              defaultSize={isMobile ? 0 : 22}
+              minSize={8}
+              maxSize={40}
               onCollapse={() => setPanelOpen('left', false)}
               onExpand={() => setPanelOpen('left', true)}
-              className="min-w-0"
+              className="min-w-0 relative"
             >
               <LeftPanel />
             </Panel>
 
-            {/* Resize handle — left */}
-            <PanelResizeHandle className="w-1 bg-pf-steel/20 hover:bg-pf-orange/60 transition-colors cursor-col-resize" />
+            {/* Resize handle — left (thicker, more visible) */}
+            <PanelResizeHandle className="w-1.5 bg-pf-steel/20 hover:bg-pf-orange transition-all cursor-col-resize" />
 
             {/* Centre — 3D Viewport */}
-            <Panel minSize={30} className="relative min-w-0">
+            <Panel minSize={25} className="relative min-w-0">
               <div className={`absolute inset-0 ${placingType ? 'cursor-crosshair' : ''}`}>
                 <Canvas
                   shadows
@@ -92,19 +92,19 @@ export default function App() {
               </div>
             </Panel>
 
-            {/* Resize handle — right */}
-            <PanelResizeHandle className="w-1 bg-pf-steel/20 hover:bg-pf-orange/60 transition-colors cursor-col-resize" />
+            {/* Resize handle — right (thicker, more visible) */}
+            <PanelResizeHandle className="w-1.5 bg-pf-steel/20 hover:bg-pf-orange transition-all cursor-col-resize" />
 
-            {/* Right — Properties inspector */}
+            {/* Right — Properties inspector (expandable left) */}
             <Panel
               panelRef={rightRef}
               collapsible
-              defaultSize={isMobile ? 0 : 19}
-              minSize={14}
-              maxSize={32}
+              defaultSize={isMobile ? 0 : 23}
+              minSize={8}
+              maxSize={40}
               onCollapse={() => setPanelOpen('right', false)}
               onExpand={() => setPanelOpen('right', true)}
-              className="min-w-0"
+              className="min-w-0 relative"
             >
               <RightPanel />
             </Panel>
@@ -112,16 +112,16 @@ export default function App() {
           </PanelGroup>
         </Panel>
 
-        {/* Resize handle — bottom */}
-        <PanelResizeHandle className="h-1 bg-pf-steel/20 hover:bg-pf-orange/60 transition-colors cursor-row-resize" />
+        {/* Resize handle — bottom (thicker, more visible) */}
+        <PanelResizeHandle className="h-1.5 bg-pf-steel/20 hover:bg-pf-orange transition-all cursor-row-resize" />
 
-        {/* Bottom — Site summary + quote */}
+        {/* Bottom — Site summary + quote (expandable up) */}
         <Panel
           panelRef={bottomRef}
           collapsible
-          defaultSize={isMobile ? 25 : 20}
-          minSize={10}
-          maxSize={45}
+          defaultSize={isMobile ? 20 : 18}
+          minSize={8}
+          maxSize={50}
           onCollapse={() => setPanelOpen('bottom', false)}
           onExpand={() => setPanelOpen('bottom', true)}
           className="min-h-0"

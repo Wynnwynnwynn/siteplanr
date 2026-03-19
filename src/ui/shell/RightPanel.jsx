@@ -46,7 +46,7 @@ export function RightPanel() {
 
   return (
     <div className="h-full flex flex-col bg-pf-graphite border-l border-pf-steel/20 overflow-hidden">
-      <div className="px-3 py-2.5 border-b border-pf-steel/20 flex-shrink-0">
+      <div className="px-3 py-2.5 border-b border-pf-steel/20 flex-shrink-0 flex items-center justify-between gap-2">
         <p className="text-pf-sand text-xs font-semibold uppercase tracking-widest">
           Properties
         </p>
