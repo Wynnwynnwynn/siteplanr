@@ -32,6 +32,7 @@ export function Dropdown({ trigger, children, align = 'left' }) {
 
       {open && (
         <div
+          onClick={() => setOpen(false)}
           className={`absolute top-full mt-1 bg-pf-graphite border border-pf-steel/30 rounded shadow-lg
             z-40 py-1 min-w-48
             ${align === 'right' ? 'right-0' : 'left-0'}`}
