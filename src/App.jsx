@@ -5,7 +5,7 @@ import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from 'reac
 import './index.css';
 import { Scene } from './scene/Scene.jsx';
 import { CartModal } from './ui/CartModal.jsx';
-import { TopBar } from './ui/shell/TopBar.jsx';
+import { MenuBar } from './ui/shell/MenuBar.jsx';
 import { LeftPanel } from './ui/shell/LeftPanel.jsx';
 import { RightPanel } from './ui/shell/RightPanel.jsx';
 import { BottomPanel } from './ui/shell/BottomPanel.jsx';
@@ -50,8 +50,8 @@ export default function App() {
 
   return (
     <div className="fixed inset-0 flex flex-col bg-pf-graphite">
-      {/* Fixed top bar */}
-      <TopBar leftRef={leftRef} rightRef={rightRef} />
+      {/* Fixed menu bar */}
+      <MenuBar leftRef={leftRef} rightRef={rightRef} bottomRef={bottomRef} />
 
       {/* Vertical panel group: main row + bottom */}
       <PanelGroup direction="vertical" className="flex-1 min-h-0">

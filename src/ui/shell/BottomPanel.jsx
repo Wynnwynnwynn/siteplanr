@@ -130,13 +130,6 @@ export function BottomPanel({ panelRef }) {
               Total <strong className="text-pf-sand">${totalWeekly}/wk</strong>
             </span>
           )}
-          <button
-            onClick={() => { panelRef?.current?.collapse(); setPanelOpen('bottom', false); }}
-            className="text-pf-steel hover:text-pf-sand text-xs transition-colors"
-            title="Collapse"
-          >
-            ▼
-          </button>
         </div>
       </div>
 
