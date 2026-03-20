@@ -54,26 +54,14 @@ export const Header: React.FC<HeaderProps> = ({
                 {title}
               </h1>
               <p className="text-caption text-neutral-500 dark:text-neutral-400">
-                Site Amenities Configurator
+                Site Planning
               </p>
             </div>
           </div>
         </div>
 
-        {/* Center: Breadcrumb (Optional) */}
-        <nav className="hidden md:flex flex-1 mx-lg">
-          <ol className="flex items-center gap-sm text-body_sm text-neutral-600 dark:text-neutral-400">
-            <li>
-              <a href="#" className="hover:text-primary transition-colors">
-                Projects
-              </a>
-            </li>
-            <li className="text-neutral-400">/</li>
-            <li className="text-neutral-900 dark:text-neutral-50 font-medium">
-              Current Project
-            </li>
-          </ol>
-        </nav>
+        {/* Center: spacer */}
+        <div className="flex-1" />
 
         {/* Right: Actions */}
         <div className="flex items-center gap-md">
