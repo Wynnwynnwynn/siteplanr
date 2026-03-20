@@ -66,7 +66,7 @@ export default function App() {
               collapsible
               defaultSize={isMobile ? 0 : 22}
               minSize={8}
-              maxSize={40}
+              maxSize={isMobile ? 40 : 30}
               onCollapse={() => setPanelOpen('left', false)}
               onExpand={() => setPanelOpen('left', true)}
               className="min-w-0 relative"
@@ -101,7 +101,7 @@ export default function App() {
               collapsible
               defaultSize={isMobile ? 0 : 23}
               minSize={8}
-              maxSize={40}
+              maxSize={isMobile ? 40 : 30}
               onCollapse={() => setPanelOpen('right', false)}
               onExpand={() => setPanelOpen('right', true)}
               className="min-w-0 relative"
