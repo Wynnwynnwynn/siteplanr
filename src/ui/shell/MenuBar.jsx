@@ -12,10 +12,8 @@ export function MenuBar({ leftRef, rightRef, bottomRef }) {
   const gridStep = useStore(s => s.gridStep);
   const cycleGridStep = useStore(s => s.cycleGridStep);
   const panels = useStore(s => s.panels);
-  const setPanelOpen = useStore(s => s.setPanelOpen);
   const clearItems = useStore(s => s.clearItems);
   const cartPlatform = useStore(s => s.cartPlatform);
-  const setCartPlatform = useStore(s => s.setCartPlatform);
   const setCartPreview = useStore(s => s.setCartPreview);
 
   const selectedItem = items.find(i => i.id === selectedId);
@@ -55,22 +53,22 @@ export function MenuBar({ leftRef, rightRef, bottomRef }) {
           />
           <MenuDivider />
           <MenuItem label="Export" onClick={openQuote} disabled={items.length === 0} />
-          <MenuItem label="Settings" onClick={() => {}} />
+          <MenuItem label="Settings" disabled subtitle="Coming soon" />
         </Dropdown>
 
         {/* View menu */}
         <Dropdown trigger="View">
           <MenuLabel>Panels</MenuLabel>
           <MenuItem
-            label={`${panels.left ? '✓' : '  '} Catalogue`}
+            label={<><span className="inline-block w-4 text-center">{panels.left ? '✓' : ''}</span> Catalogue</>}
             onClick={toggleLeft}
           />
           <MenuItem
-            label={`${panels.right ? '✓' : '  '} Properties`}
+            label={<><span className="inline-block w-4 text-center">{panels.right ? '✓' : ''}</span> Properties</>}
             onClick={toggleRight}
           />
           <MenuItem
-            label={`${panels.bottom ? '✓' : '  '} Summary`}
+            label={<><span className="inline-block w-4 text-center">{panels.bottom ? '✓' : ''}</span> Summary</>}
             onClick={toggleBottom}
           />
           <MenuDivider />
