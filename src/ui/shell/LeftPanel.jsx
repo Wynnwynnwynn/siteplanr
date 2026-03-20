@@ -16,20 +16,21 @@ function CategorySection({ category }) {
   const cancelPlacing  = useStore(s => s.cancelPlacing);
 
   return (
-    <div>
+    <div className="flex flex-col flex-shrink-0">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-3 py-1.5
-                   text-pf-steel hover:text-pf-sand transition-colors"
+        className="flex items-center justify-between px-3 py-1.5 text-left
+                   text-pf-steel hover:text-pf-sand hover:bg-pf-steel/5
+                   transition-colors flex-shrink-0"
       >
-        <span className="text-xs font-semibold uppercase tracking-wider">
+        <span className="text-xs font-semibold uppercase tracking-wider min-w-0">
           {category.label}
         </span>
-        <span className="text-xs opacity-60">{open ? '▲' : '▼'}</span>
+        <span className="text-xs opacity-60 flex-shrink-0 ml-2">{open ? '▲' : '▼'}</span>
       </button>
 
       {open && (
-        <div className="space-y-0.5 pb-2">
+        <div className="flex flex-col flex-shrink-0">
           {category.keys.map(key => {
             const def    = CATALOGUE[key];
             const visual = ITEM_VISUALS[key];
@@ -39,8 +40,8 @@ function CategorySection({ category }) {
               <button
                 key={key}
                 onClick={() => active ? cancelPlacing() : setPlacingType(key)}
-                className={`w-full flex items-center gap-2.5 px-3 py-2 text-left
-                  transition-colors border-l-2
+                className={`flex items-center gap-2 px-3 py-2 text-left text-xs min-w-0
+                  transition-colors border-l-2 flex-shrink-0
                   ${active
                     ? 'border-pf-orange bg-pf-orange/10 text-pf-sand'
                     : 'border-transparent hover:border-pf-steel/40 hover:bg-pf-steel/10 text-pf-sand/70 hover:text-pf-sand'
@@ -50,8 +51,8 @@ function CategorySection({ category }) {
                   className="w-3 h-3 rounded-sm flex-shrink-0 border border-black/20"
                   style={{ backgroundColor: visual?.wallColor ?? '#4E6E81' }}
                 />
-                <span className="text-xs font-medium flex-1 truncate">{def?.label}</span>
-                <span className="text-xs text-pf-steel flex-shrink-0">${def?.weekly}/wk</span>
+                <span className="font-medium flex-1 truncate">{def?.label}</span>
+                <span className="text-pf-steel flex-shrink-0 whitespace-nowrap">${def?.weekly}/wk</span>
               </button>
             );
           })}
@@ -66,30 +67,31 @@ export function LeftPanel() {
   const items      = useStore(s => s.items);
 
   return (
-    <div className="h-full flex flex-col bg-pf-graphite border-r border-pf-steel/20 overflow-hidden">
-      <div className="px-3 py-2.5 border-b border-pf-steel/20 flex-shrink-0 flex items-start justify-between gap-2">
-        <div>
-          <p className="text-pf-sand text-xs font-semibold uppercase tracking-widest">
-            Add Buildings
-          </p>
-          <p className="text-pf-steel text-xs mt-0.5">Click to enter place mode</p>
-        </div>
+    <div className="h-full flex flex-col gap-0 bg-pf-graphite border-r border-pf-steel/20">
+      {/* Header */}
+      <div className="px-3 py-2.5 border-b border-pf-steel/20 flex-shrink-0 flex flex-col gap-0.5">
+        <p className="text-pf-sand text-xs font-semibold uppercase tracking-widest leading-tight">
+          Add Buildings
+        </p>
+        <p className="text-pf-steel text-xs leading-tight">Click to enter place mode</p>
       </div>
 
-      <div className="flex-1 overflow-y-auto py-1">
+      {/* Scrollable content */}
+      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden flex flex-col gap-0">
         {CATEGORIES.map(cat => (
           <CategorySection key={cat.label} category={cat} />
         ))}
       </div>
 
-      <div className="px-3 py-2 border-t border-pf-steel/20 flex-shrink-0 space-y-1.5">
+      {/* Footer */}
+      <div className="px-3 py-2 border-t border-pf-steel/20 flex-shrink-0 flex flex-col gap-1.5">
         <p className="text-pf-steel/50 text-xs leading-relaxed">
           R rotate · C clone · Del delete · G grid
         </p>
         {items.length > 0 && (
           <button
             onClick={clearItems}
-            className="w-full text-xs text-pf-steel/60 hover:text-pf-sand transition-colors py-1"
+            className="text-xs text-pf-steel/60 hover:text-pf-sand transition-colors py-1"
           >
             Clear all items
           </button>

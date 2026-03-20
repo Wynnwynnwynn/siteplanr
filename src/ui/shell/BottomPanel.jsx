@@ -13,35 +13,37 @@ function ItemsTab({ items }) {
 
   if (items.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full text-pf-steel text-xs">
+      <div className="flex items-center justify-center h-full text-pf-steel text-xs px-4 text-center">
         No items placed yet — click a building in the catalogue to start
       </div>
     );
   }
 
   return (
-    <div className="h-full overflow-y-auto">
-      <table className="w-full text-xs">
-        <thead>
-          <tr className="border-b border-pf-steel/20">
-            <th className="text-left px-4 py-2 text-pf-steel font-semibold uppercase tracking-wider">Building</th>
-            <th className="text-center px-2 py-2 text-pf-steel font-semibold uppercase tracking-wider">Qty</th>
-            <th className="text-right px-4 py-2 text-pf-steel font-semibold uppercase tracking-wider">Cost/wk</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.entries(grouped).map(([type, qty]) => {
-            const def = CATALOGUE[type];
-            return (
-              <tr key={type} className="border-b border-pf-steel/10 hover:bg-pf-steel/5">
-                <td className="px-4 py-1.5 text-pf-sand">{def?.label ?? type}</td>
-                <td className="px-2 py-1.5 text-center text-pf-steel">{qty}</td>
-                <td className="px-4 py-1.5 text-right text-pf-sand">${(def?.weekly ?? 0) * qty}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+    <div className="h-full flex flex-col overflow-hidden">
+      <div className="overflow-y-auto flex-1 min-h-0">
+        <table className="w-full text-xs">
+          <thead className="sticky top-0 bg-pf-navy z-10">
+            <tr className="border-b border-pf-steel/20">
+              <th className="text-left px-4 py-2 text-pf-steel font-semibold uppercase tracking-wider">Building</th>
+              <th className="text-center px-2 py-2 text-pf-steel font-semibold uppercase tracking-wider">Qty</th>
+              <th className="text-right px-4 py-2 text-pf-steel font-semibold uppercase tracking-wider">Cost/wk</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(grouped).map(([type, qty]) => {
+              const def = CATALOGUE[type];
+              return (
+                <tr key={type} className="border-b border-pf-steel/10 hover:bg-pf-steel/5 transition-colors">
+                  <td className="px-4 py-1.5 text-pf-sand">{def?.label ?? type}</td>
+                  <td className="px-2 py-1.5 text-center text-pf-steel">{qty}</td>
+                  <td className="px-4 py-1.5 text-right text-pf-sand">${(def?.weekly ?? 0) * qty}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
@@ -56,14 +58,14 @@ function QuoteTab({ items }) {
   const total   = lines.reduce((s, l) => s + l.weekly * l.qty, 0);
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto px-4 py-2">
+    <div className="h-full flex flex-col gap-0">
+      <div className="flex-1 min-h-0 overflow-y-auto px-4 py-2">
         {lines.length === 0 ? (
           <p className="text-pf-steel text-xs text-center mt-4">No items placed</p>
         ) : lines.map(line => (
-          <div key={line.sku} className="flex justify-between py-1.5 border-b border-pf-steel/10 text-xs">
-            <span className="text-pf-sand/80">{line.label} × {line.qty}</span>
-            <span className="text-pf-sand">${line.weekly * line.qty}/wk</span>
+          <div key={line.sku} className="flex justify-between py-1.5 border-b border-pf-steel/10 text-xs transition-colors hover:bg-pf-steel/5">
+            <span className="text-pf-sand/80 truncate">{line.label} × {line.qty}</span>
+            <span className="text-pf-sand flex-shrink-0 ml-2">${line.weekly * line.qty}/wk</span>
           </div>
         ))}
       </div>
@@ -72,7 +74,7 @@ function QuoteTab({ items }) {
         <select
           value={cartPlatform}
           onChange={e => setCartPlatform(e.target.value)}
-          className="bg-pf-navy text-pf-steel border border-pf-steel/30 rounded px-2 py-1 text-xs"
+          className="bg-pf-navy text-pf-steel border border-pf-steel/30 rounded px-2 py-1 text-xs flex-shrink-0"
         >
           <option value="generic">Generic</option>
           <option value="shopify">Shopify</option>
@@ -80,7 +82,7 @@ function QuoteTab({ items }) {
         </select>
 
         {total > 0 && (
-          <span className="text-pf-sand text-sm font-bold ml-auto mr-3">
+          <span className="text-pf-sand text-sm font-bold ml-auto mr-3 flex-shrink-0">
             ${total}<span className="text-pf-steel text-xs font-normal">/wk</span>
           </span>
         )}
@@ -90,7 +92,7 @@ function QuoteTab({ items }) {
           disabled={items.length === 0}
           className="px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wide
                      bg-pf-orange hover:brightness-110 disabled:opacity-30
-                     text-white transition-all"
+                     text-white transition-all flex-shrink-0"
         >
           Export
         </button>
@@ -108,15 +110,15 @@ export function BottomPanel({ panelRef }) {
   const totalWeekly = items.reduce((s, it) => s + (CATALOGUE[it.type]?.weekly ?? 0), 0);
 
   return (
-    <div className="h-full flex flex-col bg-pf-navy border-t border-pf-steel/30 overflow-hidden">
+    <div className="h-full flex flex-col gap-0 bg-pf-navy border-t border-pf-steel/30">
       {/* Tab bar with header info */}
-      <div className="flex items-center justify-between border-b border-pf-steel/20 flex-shrink-0 px-3">
-        <div className="flex items-center gap-0">
+      <div className="flex items-center justify-between border-b border-pf-steel/20 flex-shrink-0 px-3 gap-2">
+        <div className="flex items-center gap-0 flex-shrink-0">
           {TABS.map(t => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`px-4 py-2 text-xs font-medium transition-colors border-b-2 -mb-px
+              className={`px-4 py-2 text-xs font-medium transition-colors border-b-2 -mb-px flex-shrink-0
                 ${tab === t
                   ? 'text-pf-sand border-pf-orange'
                   : 'text-pf-steel border-transparent hover:text-pf-sand hover:border-pf-steel/40'
@@ -126,9 +128,9 @@ export function BottomPanel({ panelRef }) {
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 ml-auto flex-shrink-0">
           {totalWeekly > 0 && (
-            <span className="text-pf-steel text-xs">
+            <span className="text-pf-steel text-xs whitespace-nowrap">
               Total <strong className="text-pf-sand">${totalWeekly}/wk</strong>
             </span>
           )}
