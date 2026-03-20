@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dashboard } from './Dashboard';
 import { CreateProjectModal, CreateProjectData } from '../components/CreateProjectModal';
+import { MainLayout } from '../ui/components/MainLayout';
 import { useProjectsStore } from '../store/projectsStore';
 
 /**
@@ -52,7 +53,7 @@ export const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-neutral-50 dark:bg-neutral-900">
+    <MainLayout title="SitePlanr">
       <Dashboard
         projects={projects}
         isLoading={isLoading}
@@ -66,7 +67,7 @@ export const DashboardPage: React.FC = () => {
         onSubmit={handleCreateProject}
         isLoading={isLoading}
       />
-    </div>
+    </MainLayout>
   );
 };
 
