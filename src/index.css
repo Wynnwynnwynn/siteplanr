@@ -93,12 +93,15 @@ body {
 
 /* Focus Ring */
 :focus-visible {
-  @apply outline-none ring-2 ring-offset-2 ring-primary;
+  outline: none;
+  ring-color: var(--color-primary);
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--color-primary);
 }
 
 /* Selection */
 ::selection {
-  @apply bg-primary-200 text-primary-900;
+  background-color: #c2d5ff;
+  color: #1f2b87;
 }
 
 /* Scrollbar Styling */
