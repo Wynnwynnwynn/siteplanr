@@ -1,9 +1,9 @@
 import React from 'react';
 
-type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'danger';
-type ButtonSize = 'xs' | 'sm' | 'md' | 'lg';
+export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'danger';
+export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   isLoading?: boolean;
