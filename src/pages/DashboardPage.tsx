@@ -13,8 +13,9 @@ import { useProjectsStore } from '../store/projectsStore';
  */
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
-  const { projects, addProject, deleteProject, isLoading, setIsLoading } = useProjectsStore();
+  const { projects, addProject, deleteProject, duplicateProject, isLoading, setIsLoading } = useProjectsStore();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
 
   const handleCreateProject = async (data: CreateProjectData) => {
     setIsLoading(true);
@@ -52,13 +53,28 @@ export const DashboardPage: React.FC = () => {
     }
   };
 
+  const handleDuplicateProject = (projectId: string) => {
+    duplicateProject(projectId);
+  };
+
+  const handleEditProject = (projectId: string) => {
+    setEditingProjectId(projectId);
+    setShowCreateModal(true);
+  };
+
   return (
     <MainLayout title="SitePlanr">
       <Dashboard
         projects={projects}
         isLoading={isLoading}
-        onCreateProject={() => setShowCreateModal(true)}
+        onCreateProject={() => {
+          setEditingProjectId(null);
+          setShowCreateModal(true);
+        }}
         onProjectClick={handleProjectClick}
+        onDeleteProject={handleDeleteProject}
+        onDuplicateProject={handleDuplicateProject}
+        onEditProject={handleEditProject}
       />
 
       <CreateProjectModal

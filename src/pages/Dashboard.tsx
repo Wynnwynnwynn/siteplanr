@@ -22,6 +22,9 @@ interface DashboardProps {
   isLoading?: boolean;
   onCreateProject?: () => void;
   onProjectClick?: (projectId: string) => void;
+  onDeleteProject?: (projectId: string) => void;
+  onDuplicateProject?: (projectId: string) => void;
+  onEditProject?: (projectId: string) => void;
 }
 
 /**
@@ -35,6 +38,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
   isLoading = false,
   onCreateProject,
   onProjectClick,
+  onDeleteProject,
+  onDuplicateProject,
+  onEditProject,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -164,6 +170,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   key={project.id}
                   project={project}
                   onClick={() => onProjectClick?.(project.id)}
+                  onDelete={() => onDeleteProject?.(project.id)}
+                  onDuplicate={() => onDuplicateProject?.(project.id)}
+                  onEdit={() => onEditProject?.(project.id)}
                 />
               ))}
             </div>
@@ -182,9 +191,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
 interface ProjectCardProps {
   project: Project;
   onClick?: () => void;
+  onDelete?: () => void;
+  onDuplicate?: () => void;
+  onEdit?: () => void;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick, onDelete, onDuplicate, onEdit }) => {
   const [showMenu, setShowMenu] = useState(false);
 
   return (
@@ -223,15 +235,36 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onClick }) => {
         {/* Quick Actions Menu */}
         {showMenu && (
           <div className="absolute top-12 right-md bg-neutral-0 dark:bg-neutral-800 rounded-lg shadow-lg z-10 min-w-32 overflow-hidden border border-neutral-200 dark:border-neutral-700">
-            <button className="w-full text-left px-md py-sm hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors text-body_sm text-neutral-900 dark:text-neutral-50">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit?.();
+                setShowMenu(false);
+              }}
+              className="w-full text-left px-md py-sm hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors text-body_sm text-neutral-900 dark:text-neutral-50"
+            >
               Edit
             </button>
             <Divider className="my-0" />
-            <button className="w-full text-left px-md py-sm hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors text-body_sm text-neutral-900 dark:text-neutral-50">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDuplicate?.();
+                setShowMenu(false);
+              }}
+              className="w-full text-left px-md py-sm hover:bg-primary-100 dark:hover:bg-primary-900 transition-colors text-body_sm text-neutral-900 dark:text-neutral-50"
+            >
               Duplicate
             </button>
             <Divider className="my-0" />
-            <button className="w-full text-left px-md py-sm hover:bg-error-100 dark:hover:bg-error-900/30 transition-colors text-body_sm text-error">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete?.();
+                setShowMenu(false);
+              }}
+              className="w-full text-left px-md py-sm hover:bg-error-100 dark:hover:bg-error-900/30 transition-colors text-body_sm text-error"
+            >
               Delete
             </button>
           </div>
