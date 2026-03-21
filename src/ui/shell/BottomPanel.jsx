@@ -109,34 +109,29 @@ export function BottomPanel({ panelRef }) {
 
   return (
     <div className="h-full flex flex-col bg-pf-navy border-t border-pf-steel/30 overflow-hidden">
-      {/* Tab bar */}
-      <div className="flex items-center border-b border-pf-steel/20 flex-shrink-0">
-        {TABS.map(t => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`px-4 py-2 text-xs font-medium transition-colors border-b-2 -mb-px
-              ${tab === t
-                ? 'text-pf-sand border-pf-orange'
-                : 'text-pf-steel border-transparent hover:text-pf-sand hover:border-pf-steel/40'
-              }`}
-          >
-            {t}
-          </button>
-        ))}
-        <div className="ml-auto flex items-center gap-3 pr-3">
+      {/* Tab bar with header info */}
+      <div className="flex items-center justify-between border-b border-pf-steel/20 flex-shrink-0 px-3">
+        <div className="flex items-center gap-0">
+          {TABS.map(t => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`px-4 py-2 text-xs font-medium transition-colors border-b-2 -mb-px
+                ${tab === t
+                  ? 'text-pf-sand border-pf-orange'
+                  : 'text-pf-steel border-transparent hover:text-pf-sand hover:border-pf-steel/40'
+                }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-3">
           {totalWeekly > 0 && (
             <span className="text-pf-steel text-xs">
               Total <strong className="text-pf-sand">${totalWeekly}/wk</strong>
             </span>
           )}
-          <button
-            onClick={() => { panelRef?.current?.collapse(); setPanelOpen('bottom', false); }}
-            className="text-pf-steel hover:text-pf-sand text-xs transition-colors"
-            title="Collapse"
-          >
-            ▼
-          </button>
         </div>
       </div>
 

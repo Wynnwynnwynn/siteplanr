@@ -67,11 +67,13 @@ export function LeftPanel() {
 
   return (
     <div className="h-full flex flex-col bg-pf-graphite border-r border-pf-steel/20 overflow-hidden">
-      <div className="px-3 py-2.5 border-b border-pf-steel/20 flex-shrink-0">
-        <p className="text-pf-sand text-xs font-semibold uppercase tracking-widest">
-          Add Buildings
-        </p>
-        <p className="text-pf-steel text-xs mt-0.5">Click to enter place mode</p>
+      <div className="px-3 py-2.5 border-b border-pf-steel/20 flex-shrink-0 flex items-start justify-between gap-2">
+        <div>
+          <p className="text-pf-sand text-xs font-semibold uppercase tracking-widest">
+            Add Buildings
+          </p>
+          <p className="text-pf-steel text-xs mt-0.5">Click to enter place mode</p>
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto py-1">
