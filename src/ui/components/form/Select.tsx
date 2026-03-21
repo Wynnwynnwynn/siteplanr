@@ -215,7 +215,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         )}
 
         {/* Hidden select for form submission */}
-        <select ref={ref} value={value} onChange={(e) => onChange?.(e.target.value)} className="hidden">
+        <select ref={ref} value={value} onChange={(e) => onChange?.(e.target.value)} className="hidden" aria-hidden="true" tabIndex={-1}>
           <option value="">{placeholder}</option>
           {options.map((option) => (
             <option key={option.value} value={option.value} disabled={option.disabled}>

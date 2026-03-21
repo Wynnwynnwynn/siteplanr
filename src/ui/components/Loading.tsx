@@ -31,6 +31,8 @@ export const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
     return (
       <div
         ref={ref}
+        role="status"
+        aria-label="Loading"
         className={`${sizeClasses[size]} ${colorClasses[color]} rounded-full animate-spin ${className || ''}`}
         {...props}
       />
