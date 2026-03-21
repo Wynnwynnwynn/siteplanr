@@ -1,6 +1,15 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+export interface ProjectFile {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  uploadedAt: string;
+  dataUrl?: string;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -11,6 +20,7 @@ export interface Project {
   lastModified: string;
   itemCount?: number;
   createdAt: string;
+  files?: ProjectFile[];
 }
 
 interface ProjectsStore {
@@ -25,6 +35,9 @@ interface ProjectsStore {
   duplicateProject: (id: string) => void;
   getProjectById: (id: string) => Project | undefined;
   setIsLoading: (loading: boolean) => void;
+  addFile: (projectId: string, file: ProjectFile) => void;
+  deleteFile: (projectId: string, fileId: string) => void;
+  getProjectFiles: (projectId: string) => ProjectFile[];
 }
 
 const defaultProjects: Project[] = [
@@ -116,6 +129,38 @@ export const useProjectsStore = create<ProjectsStore>()(
 
       setIsLoading: (loading: boolean) =>
         set({ isLoading: loading }),
+
+      addFile: (projectId: string, file: ProjectFile) =>
+        set((state) => ({
+          projects: state.projects.map((p) =>
+            p.id === projectId
+              ? {
+                  ...p,
+                  files: [...(p.files ?? []), file],
+                  lastModified: new Date().toISOString(),
+                }
+              : p
+          ),
+        })),
+
+      deleteFile: (projectId: string, fileId: string) =>
+        set((state) => ({
+          projects: state.projects.map((p) =>
+            p.id === projectId
+              ? {
+                  ...p,
+                  files: (p.files ?? []).filter((f) => f.id !== fileId),
+                  lastModified: new Date().toISOString(),
+                }
+              : p
+          ),
+        })),
+
+      getProjectFiles: (projectId: string) => {
+        const state = get();
+        const project = state.projects.find((p) => p.id === projectId);
+        return project?.files ?? [];
+      },
     }),
     {
       name: 'siteplanr-projects-store',

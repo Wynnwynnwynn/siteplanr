@@ -6,6 +6,7 @@ import { TextInput } from '../ui/components/form/TextInput';
 import { TextArea } from '../ui/components/form/TextArea';
 import { Select } from '../ui/components/form/Select';
 import { Card } from '../ui/components/Card';
+import { FileBrowser } from '../ui/components/FileBrowser';
 
 const CATEGORIES = [
   { value: 'general', label: 'General' },
@@ -159,8 +160,11 @@ export const ProjectSettings: React.FC = () => {
           </div>
         </Card>
 
+        {/* File Browser */}
+        <FileBrowser projectId={projectId!} />
+
         {/* Project Info Card */}
-        <Card className="p-6 mb-8 bg-pf-steel/10">
+        <Card className="p-6 mt-8 mb-8 bg-pf-steel/10">
           <h3 className="text-sm font-semibold text-pf-white mb-4">Project Info</h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
