@@ -11,6 +11,8 @@ interface CreateProjectModalProps {
   onClose: () => void;
   onSubmit?: (data: CreateProjectData) => Promise<void>;
   isLoading?: boolean;
+  initialData?: CreateProjectData & { id?: string };
+  isEditing?: boolean;
 }
 
 export interface CreateProjectData {
@@ -29,13 +31,33 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   onClose,
   onSubmit,
   isLoading = false,
+  initialData,
+  isEditing = false,
 }) => {
   const [formData, setFormData] = useState<CreateProjectData>({
-    name: '',
-    description: '',
-    category: 'general',
+    name: initialData?.name ?? '',
+    description: initialData?.description ?? '',
+    category: initialData?.category ?? 'general',
   });
   const [errors, setErrors] = useState<Partial<CreateProjectData>>({});
+
+  // Update form data when initialData changes (e.g., when editing different project)
+  React.useEffect(() => {
+    if (initialData) {
+      setFormData({
+        name: initialData.name ?? '',
+        description: initialData.description ?? '',
+        category: initialData.category ?? 'general',
+      });
+    } else {
+      setFormData({
+        name: '',
+        description: '',
+        category: 'general',
+      });
+    }
+    setErrors({});
+  }, [initialData, isOpen]);
 
   const categoryOptions = [
     { value: 'general', label: 'General Project' },
@@ -69,16 +91,18 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
 
     try {
       await onSubmit?.(formData);
-      // Reset form on success
-      setFormData({
-        name: '',
-        description: '',
-        category: 'general',
-      });
+      // Reset form on success (only for create mode)
+      if (!isEditing) {
+        setFormData({
+          name: '',
+          description: '',
+          category: 'general',
+        });
+      }
       setErrors({});
       onClose();
     } catch (error) {
-      console.error('Error creating project:', error);
+      console.error('Error submitting project:', error);
     }
   };
 
@@ -100,7 +124,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
     <Dialog
       isOpen={isOpen}
       onClose={onClose}
-      title="Create New Project"
+      title={isEditing ? 'Edit Project' : 'Create New Project'}
       size="md"
     >
       <form onSubmit={handleSubmit} className="space-y-lg">
@@ -153,7 +177,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
             type="submit"
             isLoading={isLoading}
           >
-            Create Project
+            {isEditing ? 'Save Changes' : 'Create Project'}
           </Button>
         </div>
       </form>
