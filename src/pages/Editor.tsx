@@ -9,6 +9,7 @@ import { TopBar } from '../ui/shell/TopBar.jsx';
 import { LeftPanel } from '../ui/shell/LeftPanel.jsx';
 import { RightPanel } from '../ui/shell/RightPanel.jsx';
 import { BottomPanel } from '../ui/shell/BottomPanel.jsx';
+import { EmptyState } from '../components/EmptyState';
 import { useStore } from '../store.js';
 import { useProjectsStore } from '../store/projectsStore';
 
@@ -36,6 +37,7 @@ export const Editor: React.FC<EditorProps> = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const placingType = useStore((s) => s.placingType);
+  const items = useStore((s) => s.items);
   const setPanelOpen = useStore((s) => s.setPanelOpen);
   const { getProjectById, setCurrentProjectId } = useProjectsStore();
   const isMobile = useIsMobile();
@@ -112,6 +114,7 @@ export const Editor: React.FC<EditorProps> = () => {
                 >
                   <Scene />
                 </Canvas>
+                {items.length === 0 && <EmptyState />}
               </div>
             </Panel>
 
