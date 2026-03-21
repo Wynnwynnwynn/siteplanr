@@ -13,7 +13,7 @@ import { useProjectsStore } from '../store/projectsStore';
  */
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
-  const { projects, addProject, deleteProject, duplicateProject, isLoading, setIsLoading } = useProjectsStore();
+  const { projects, addProject, deleteProject, duplicateProject, updateProject, getProjectById, isLoading, setIsLoading } = useProjectsStore();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
 
@@ -23,21 +23,33 @@ export const DashboardPage: React.FC = () => {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      const newProject = {
-        id: Date.now().toString(),
-        name: data.name,
-        description: data.description,
-        category: data.category,
-        tags: [data.category],
-        lastModified: new Date().toISOString(),
-        createdAt: new Date().toISOString(),
-        itemCount: 0,
-      };
+      if (editingProjectId) {
+        // Update existing project
+        updateProject(editingProjectId, {
+          name: data.name,
+          description: data.description,
+          category: data.category,
+          tags: [data.category],
+        });
+      } else {
+        // Create new project
+        const newProject = {
+          id: Date.now().toString(),
+          name: data.name,
+          description: data.description,
+          category: data.category,
+          tags: [data.category],
+          lastModified: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+          itemCount: 0,
+        };
 
-      addProject(newProject);
+        addProject(newProject);
+      }
       setShowCreateModal(false);
+      setEditingProjectId(null);
     } catch (error) {
-      console.error('Failed to create project:', error);
+      console.error('Failed to submit project:', error);
     } finally {
       setIsLoading(false);
     }
@@ -79,9 +91,14 @@ export const DashboardPage: React.FC = () => {
 
       <CreateProjectModal
         isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
+        onClose={() => {
+          setShowCreateModal(false);
+          setEditingProjectId(null);
+        }}
         onSubmit={handleCreateProject}
         isLoading={isLoading}
+        initialData={editingProjectId ? getProjectById(editingProjectId) : undefined}
+        isEditing={!!editingProjectId}
       />
     </MainLayout>
   );
