@@ -89,7 +89,7 @@ export const Editor: React.FC<EditorProps> = () => {
               collapsible
               defaultSize={isMobile ? 0 : 18}
               minSize={12}
-              maxSize={30}
+              maxSize={isMobile ? 40 : 30}
               onCollapse={() => setPanelOpen('left', false)}
               onExpand={() => setPanelOpen('left', true)}
               className="min-w-0"
@@ -124,7 +124,7 @@ export const Editor: React.FC<EditorProps> = () => {
               collapsible
               defaultSize={isMobile ? 0 : 19}
               minSize={14}
-              maxSize={32}
+              maxSize={isMobile ? 40 : 30}
               onCollapse={() => setPanelOpen('right', false)}
               onExpand={() => setPanelOpen('right', true)}
               className="min-w-0"
