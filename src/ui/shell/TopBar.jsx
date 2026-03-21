@@ -1,8 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../store.js';
+import { useProjectsStore } from '../../store/projectsStore';
 import { CATALOGUE, createCartPayload } from '../../utils.js';
 
 export function TopBar({ leftRef, rightRef }) {
+  const navigate     = useNavigate();
   const placingType  = useStore(s => s.placingType);
   const cancelPlacing = useStore(s => s.cancelPlacing);
   const selectedId   = useStore(s => s.selectedId);
@@ -12,6 +15,9 @@ export function TopBar({ leftRef, rightRef }) {
   const setPanelOpen = useStore(s => s.setPanelOpen);
   const cartPlatform = useStore(s => s.cartPlatform);
   const setCartPreview = useStore(s => s.setCartPreview);
+
+  const { currentProjectId, getProjectById } = useProjectsStore();
+  const currentProject = currentProjectId ? getProjectById(currentProjectId) : null;
 
   const selectedItem = items.find(i => i.id === selectedId);
   const totalWeekly  = items.reduce((s, it) => s + (CATALOGUE[it.type]?.weekly ?? 0), 0);
@@ -33,7 +39,17 @@ export function TopBar({ leftRef, rightRef }) {
     <header className="h-11 flex-shrink-0 flex items-center px-3 gap-3
                        bg-pf-navy border-b border-pf-steel/30 z-30 select-none">
 
-      {/* Left toggle */}
+      {/* Back to Dashboard */}
+      <button
+        onClick={() => navigate('/')}
+        title="Back to Dashboard"
+        className="w-7 h-7 flex items-center justify-center rounded
+                   text-pf-steel hover:text-pf-sand hover:bg-pf-steel/20 transition-colors text-base leading-none"
+      >
+        ‹
+      </button>
+
+      {/* Left panel toggle */}
       <button
         onClick={toggleLeft}
         title={panels.left ? 'Hide catalogue' : 'Show catalogue'}
@@ -43,15 +59,20 @@ export function TopBar({ leftRef, rightRef }) {
         {panels.left ? '◧' : '▣'}
       </button>
 
-      {/* Brand wordmark */}
+      {/* Brand + project name */}
       <div className="flex items-center gap-1.5 mr-2">
         <span className="w-2 h-2 rounded-full bg-pf-orange flex-shrink-0" />
         <span className="text-pf-sand font-bold text-sm tracking-widest uppercase">
-          PanelFab
-        </span>
-        <span className="text-pf-steel/60 text-xs font-light ml-1 hidden sm:inline">
           SitePlanr
         </span>
+        {currentProject && (
+          <>
+            <span className="text-pf-steel/40 mx-1 hidden sm:inline">/</span>
+            <span className="text-pf-sand/80 text-xs font-medium truncate max-w-40 hidden sm:inline">
+              {currentProject.name}
+            </span>
+          </>
+        )}
       </div>
 
       {/* Centre — context status */}

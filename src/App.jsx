@@ -1,8 +1,15 @@
-import React, { useRef, useEffect } from 'react';
-import * as THREE from 'three';
-import { Canvas } from '@react-three/fiber';
-import { Panel, Group as PanelGroup, Separator as PanelResizeHandle } from 'react-resizable-panels';
+import React from 'react';
 import './index.css';
+import AppRouter from './router';
+
+/**
+ * App Root Component
+ *
+ * Entry point for the SitePlanr application.
+ * Renders the router which handles page navigation and state management.
+ */
+export default function App() {
+  return <AppRouter />;
 import { Scene } from './scene/Scene.jsx';
 import { CartModal } from './ui/CartModal.jsx';
 import { MenuBar } from './ui/shell/MenuBar.jsx';
