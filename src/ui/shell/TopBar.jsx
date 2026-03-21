@@ -120,6 +120,14 @@ export function TopBar({ leftRef, rightRef }) {
           </span>
         )}
         <button
+          onClick={() => currentProjectId && navigate(`/settings/${currentProjectId}`)}
+          title="Project settings"
+          className="w-7 h-7 flex items-center justify-center rounded text-sm
+                     text-pf-steel hover:text-pf-sand hover:bg-pf-steel/20 transition-colors"
+        >
+          ⚙
+        </button>
+        <button
           onClick={openQuote}
           disabled={items.length === 0}
           className="px-3 py-1 rounded text-xs font-bold uppercase tracking-wide
